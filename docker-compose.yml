@@ -1,7 +1,7 @@
 services:
   bot:
     build:
-      context: amazon-deals-telegram-bot
+      context: .
       dockerfile: Dockerfile
     container_name: amazon-deals-telegram-bot
     env_file:
