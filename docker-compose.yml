@@ -1,28 +1,52 @@
 services:
-  bot:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: amazon-deals-telegram-bot
-    env_file:
-      - .env
+  openvpn-client:
+    image: ghcr.io/wfg/openvpn-client
+    container_name: openvpn-client
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
     environment:
-      - REMOTE_CHROMIUM=http://selenium:4444/wd/hub   # Selenium grid address (default value)
-      - AMAZON_DEALS_TG_CRON_SCHEDULE=*/20 8-23 * * * # Cron expression schedule (default value)
-      - TZ=Europe/Rome                                # Timezone (if unset, UTC is default)
-    depends_on:
-      selenium:
-        condition: service_healthy
-    restart: on-failure
+      - KILL_SWITCH=on              
+      - FORWARDED_PORTS=nl-ams-59103
+      - SUBNETS=192.168.0.0/24,192.168.1.0/24
+    volumes:
+      - /home/python-telegram/vpn:/data/vpn
+    ports:
+      - 5665:5665
+      - 1500:1500
+    restart: unless-stopped
 
   selenium:
     image: selenium/standalone-chromium:latest
     container_name: amazon-deals-tg-selenium
+    network_mode: service:openvpn-client  
     shm_size: 2g
     healthcheck:
-      test: ["CMD-SHELL", "curl -sSL \"http://selenium:4444/wd/hub/status\" 2>&1 | jq -r '.value.ready' 2>&1 | grep \"true\""]
+      test: ["CMD-SHELL", "curl -sSL \"http://localhost:4444/wd/hub/status\" 2>&1 | jq -r '.value.ready' 2>&1 | grep \"true\""]
       interval: 1m
       timeout: 60s
       retries: 3
       start_period: 300s
     restart: always
+    depends_on:
+      - openvpn-client
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: amazon-deals-telegram-bot
+    network_mode: service:openvpn-client 
+    env_file:
+      - .env
+    environment:
+      - REMOTE_CHROMIUM=http://localhost:4444/wd/hub 
+      - AMAZON_DEALS_TG_CRON_SCHEDULE=*/20 8-23 * * *
+      - TZ=Europe/Rome
+    depends_on:
+      selenium:
+        condition: service_healthy
+      openvpn-client:
+        condition: service_started
+    restart: on-failure

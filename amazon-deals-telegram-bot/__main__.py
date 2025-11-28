@@ -81,9 +81,9 @@ def send_deal(bot, product_info, chat_id):
     comparison_text = ['invece di ', 'al posto di ', 'piuttosto che ']
 
     caption = "<b>" + product_info["title"] + "</b>" + "\n\n"
-    caption += "\U0001F4B0 <b>EUR " + product_info["new_price"] + "</b> (prima era EUR " + product_info["old_price"] + ")" + "\n\n"
-    caption += "\U0001F3F7 " + "<b>" + product_info["discount_rate"] + " di sconto </b>" + "\n\n"
-    caption += "<a href ='" + add_affiliate_id(apa.url_from_id(product_info["product_id"]), os.environ.get("AMAZON_DEALS_TG_AFFILIATE_ID")) + "'>Vai all'offerta Amazon</a>" "\n\n"
+    caption += "\U0001F4B0 <b>EUR " + product_info["new_price"] + "</b> (prima era EUR " + product_info["old_price"] + ")" + "\n"
+    caption += "\U0001F3F7 " + "<b>" + product_info["discount_rate"] + " di sconto </b>" + "\n"
+    caption += "\U0001F517" + "<a href ='" + add_affiliate_id(apa.url_from_id(product_info["product_id"]), os.environ.get("AMAZON_DEALS_TG_AFFILIATE_ID")) + "'>Vai all'offerta Amazon</a>" "\n\n"
 
     asyncio.run(bot.send_photo(chat_id, product_info["image_link"], caption, parse_mode="HTML"))
 
