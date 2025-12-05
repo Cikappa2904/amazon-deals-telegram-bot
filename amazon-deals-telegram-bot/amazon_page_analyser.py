@@ -70,13 +70,21 @@ def decode_amazon_deals_page(url):
     values = get_dict(decoded_url)
     return values
 
+
+tech_ids = [
+    "460158031",  # Informatica (Qui trovi le schede video e componenti)
+    "412609031",  # Elettronica
+    "412606031"   # Videogiochi
+]
+
+
 def encode_amazon_deals_page(
     base_url,
     percentOff_min=None,
     percentOff_max=None,
     price_min=None,
     price_max=None,
-    departments=None,
+    departments=tech_ids,
     reviewRating=None,
     brands=None,
     starting_part='discounts-widget',
