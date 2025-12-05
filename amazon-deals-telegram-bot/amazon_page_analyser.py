@@ -25,6 +25,9 @@ from babel.numbers import parse_decimal  # from price to number
 from urllib.parse import unquote, quote
 import json
 
+import tracked_products  # Import tracked products configuration
+import tracked_asins  # Import tracked ASINs configuration
+
 
 def start_selenium():
     chromium_service = Service()  # now Selenium download the correct version of the webdriver
@@ -71,11 +74,7 @@ def decode_amazon_deals_page(url):
     return values
 
 
-tech_ids = [
-    "460158031",  # Informatica (Qui trovi le schede video e componenti)
-    "412609031",  # Elettronica
-    "412606031"   # Videogiochi
-]
+tech_ids = tracked_products.TECH_DEPARTMENT_IDS  # Use department IDs from config
 
 
 def encode_amazon_deals_page(
@@ -191,13 +190,106 @@ def get_all_deals_ids():
         product_ids = [extract_product_id(url) for url in deals_urls if
                        extract_product_id(url) is not None and extract_product_id(url) != '']
 
+        # Remove duplicates
+        product_ids = [*set(product_ids)]
+        
+        print(f"Found {len(product_ids)} unique products. Filtering for tracked categories...")
+        
+        # Filter products based on tracked keywords
+        filtered_product_ids = filter_products_by_keywords(product_ids)
+        
+        print(f"Filtered to {len(filtered_product_ids)} products matching tracked categories")
+
         selenium_driver.quit()  # close everything that was created. Better not to keep driver open for much time
-        return [*set(product_ids)]  # remove duplicates
+        return filtered_product_ids
 
     except Exception as e:
         print(e)
         selenium_driver.quit()  # close everything that was created. Better not to keep driver open for much time
         return []  # error, no ids taken
+
+
+def filter_products_by_keywords(product_ids, max_workers=10):
+    """
+    Filter product IDs to only include those matching tracked keywords or ASINs.
+    Uses multithreading for faster processing.
+    
+    Args:
+        product_ids (list): List of product IDs to filter
+        max_workers (int): Maximum number of concurrent threads
+        
+    Returns:
+        list: Filtered product IDs that match tracked categories or ASINs
+    """
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    
+    filtered_ids = []
+    checked_count = 0
+    total = len(product_ids)
+    
+    # Get tracked ASINs info first if FIND_SIMILAR_PRODUCTS is enabled
+    tracked_titles = []
+    if tracked_asins.FIND_SIMILAR_PRODUCTS and tracked_asins.get_all_tracked_asins():
+        print("Loading tracked ASINs for similarity comparison...")
+        for asin in tracked_asins.get_all_tracked_asins():
+            try:
+                info = get_product_info(asin)
+                if info:
+                    tracked_titles.append(info["title"])
+                    print(f"  Tracking: {info['title'][:70]}...")
+            except Exception as e:
+                print(f"  Error loading ASIN {asin}: {e}")
+    
+    def check_product(product_id):
+        """Check if a single product matches tracked keywords or ASINs."""
+        try:
+            # Priority 1: Check if it's a tracked ASIN
+            if tracked_asins.is_tracked_asin(product_id):
+                print(f"⭐ TRACKED ASIN: {product_id}")
+                return product_id
+            
+            # Get product info
+            product_info = get_product_info(product_id)
+            if not product_info:
+                return None
+            
+            title = product_info["title"]
+            
+            # Priority 2: Check similarity to tracked ASINs
+            if tracked_asins.FIND_SIMILAR_PRODUCTS and tracked_titles:
+                is_similar, best_match, score = tracked_asins.is_similar_to_tracked(
+                    title, tracked_titles, tracked_asins.SIMILARITY_THRESHOLD
+                )
+                if is_similar:
+                    print(f"🎯 Similar ({score}%): {title[:60]}... → {best_match[:40]}...")
+                    return product_id
+            
+            # Priority 3: Check if it matches tracked tech categories
+            if tracked_products.is_tech_product(title):
+                category = tracked_products.get_matching_category(title)
+                print(f"✓ Matched: {title[:60]}... (Category: {category})")
+                return product_id
+                
+        except Exception as e:
+            print(f"Error checking product {product_id}: {e}")
+        return None
+    
+    # Use ThreadPoolExecutor for concurrent checking
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        # Submit all tasks
+        future_to_id = {executor.submit(check_product, pid): pid for pid in product_ids}
+        
+        # Process results as they complete
+        for future in as_completed(future_to_id):
+            checked_count += 1
+            if checked_count % 10 == 0:
+                print(f"Progress: {checked_count}/{total} products checked...")
+            
+            result = future.result()
+            if result:
+                filtered_ids.append(result)
+    
+    return filtered_ids
 
 
 def get_submenus_urls(submenu_url):

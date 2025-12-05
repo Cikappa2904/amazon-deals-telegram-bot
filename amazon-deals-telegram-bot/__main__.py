@@ -1,4 +1,6 @@
 import amazon_page_analyser as apa
+import tracked_products  # Import tracked products configuration
+import tracked_asins  # Import tracked ASINs configuration
 
 import random
 import time
@@ -25,12 +27,32 @@ CRON_EXPRESSION = os.environ.get("AMAZON_DEALS_TG_CRON_SCHEDULE") if os.environ.
 
 OUTPUT_DEALS_FILE = "deals_ids.json" if not os.environ.get("IS_CONTAINERIZED") else "/data/deals_ids.json"  # file to save scraped deals ids
 
+# Update interval in seconds - can be configured via environment variable
+UPDATE_INTERVAL = int(os.environ.get("AMAZON_DEALS_UPDATE_INTERVAL", 10*60))  # default: 10 minutes
+
 
 def get_random_product_info(deals_ids, already_sent_products_ids):
     if(len(deals_ids) == 0):
         return None
 
-    selected_deal_id = random.choice(deals_ids)  # select a random product to get the info
+    # Prioritize tracked ASINs if present
+    tracked_asins_in_deals = [asin for asin in deals_ids if tracked_asins.is_tracked_asin(asin)]
+    
+    if tracked_asins_in_deals:
+        print(f"Found {len(tracked_asins_in_deals)} tracked ASINs in deals. Prioritizing...")
+        # Prefer tracked ASINs that haven't been sent yet
+        unsent_tracked = [asin for asin in tracked_asins_in_deals if asin not in already_sent_products_ids]
+        if unsent_tracked:
+            selected_deal_id = random.choice(unsent_tracked)
+            print(f"Selected tracked ASIN: {selected_deal_id}")
+        else:
+            # All tracked ASINs were sent, pick any tracked ASIN
+            selected_deal_id = random.choice(tracked_asins_in_deals)
+            print(f"Selected tracked ASIN (previously sent): {selected_deal_id}")
+    else:
+        # No tracked ASINs, pick random from all deals
+        selected_deal_id = random.choice(deals_ids)
+
     selected_product_info = apa.get_product_info(selected_deal_id)  # it may be None in case of some errors while scraping the page
 
     while True:  # get new product until the selected one is valid
@@ -80,9 +102,39 @@ def send_deal(bot, product_info, chat_id):
     starting_text = ['A soli ', 'Solamente ', 'Soltanto ', 'Appena ', 'Incredibilmente solo ', 'Incredibilmente soltanto ']
     comparison_text = ['invece di ', 'al posto di ', 'piuttosto che ']
 
-    caption = "<b>" + product_info["title"] + "</b>" + "\n\n"
+    # Check if this is a tracked ASIN (priority product)
+    is_tracked = tracked_asins.is_tracked_asin(product_info["product_id"])
+    
+    # Get the category for this product
+    category = tracked_products.get_matching_category(product_info["title"])
+    category_emoji = {
+        "smartphones": "\U0001F4F1",
+        "laptops": "\U0001F4BB",
+        "graphics_cards": "\U0001F3AE",
+        "processors": "\U0001F4BF",
+        "monitors": "\U0001F5A5",
+        "tablets": "\U0001F4F1",
+        "smartwatches": "\U0000231A",
+        "headphones": "\U0001F3A7",
+        "consoles": "\U0001F3AE",
+        "ssd_storage": "\U0001F4BE",
+        "ram": "\U0001F4CA",
+        "motherboards": "\U0001F4BB",
+        "cameras": "\U0001F4F7",
+        "mice_keyboards": "\U00002328"
+    }
+    emoji = category_emoji.get(category, "\U0001F4E6") if category else "\U0001F4E6"
+
+    # Add special marker for tracked ASINs
+    tracked_marker = "⭐ " if is_tracked else ""
+    
+    caption = tracked_marker + emoji + " <b>" + product_info["title"] + "</b>" + "\n\n"
     caption += "\U0001F4B0 <b>EUR " + product_info["new_price"][0:len(product_info["new_price"])-1] + "</b> (prima era EUR " + product_info["old_price"][0:len(product_info["old_price"])-1] + ")" + "\n"
     caption += "\U0001F3F7 " + "<b>" + product_info["discount_rate"][1:] + " di sconto </b>" + "\n"
+    if is_tracked:
+        caption += "\U00002B50 <i>Prodotto Tracciato</i>" + "\n"
+    if category:
+        caption += "\U0001F4C2 <i>" + category.replace("_", " ").title() + "</i>" + "\n"
     caption += "\U0001F517" + "<a href ='" + add_affiliate_id(apa.url_from_id(product_info["product_id"]), os.environ.get("AMAZON_DEALS_TG_AFFILIATE_ID")) + "'>Vai all'offerta Amazon</a>" "\n\n"
 
     asyncio.run(bot.send_photo(chat_id, product_info["image_link"], caption, parse_mode="HTML"))
@@ -96,7 +148,7 @@ def retrieve_deals():
         with open(OUTPUT_DEALS_FILE, "r") as file:
             deals_dict = json.load(file)
             download_new_deals = False
-            if time.time() - float(deals_dict["collection_time"]) > 2*3600:     # update deals every 2 hours
+            if time.time() - float(deals_dict["collection_time"]) > UPDATE_INTERVAL:     # update deals based on UPDATE_INTERVAL
                 download_new_deals = True
 
     # cannot get data from file, download from web

@@ -43,6 +43,7 @@ services:
     environment:
       - REMOTE_CHROMIUM=http://localhost:4444/wd/hub 
       - AMAZON_DEALS_TG_CRON_SCHEDULE=*/20 8-23 * * *
+      - AMAZON_DEALS_UPDATE_INTERVAL=600  # 10 minuti
       - TZ=Europe/Rome
     depends_on:
       selenium:
