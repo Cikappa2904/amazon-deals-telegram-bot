@@ -159,7 +159,7 @@ def get_all_deals_ids():
         # # go to page with 50% or more deals (the radio with value 3)
         # deals_50_button = selenium_driver.find_element(By.XPATH, '//input[@type="radio" and @name="percentOff" and @value="3"]')
         # selenium_driver.execute_script("arguments[0].click();", deals_50_button)
-        selenium_driver.get(encode_amazon_deals_page(deals_page, percentOff_min=50))    # go to page with 50% or more deals
+        selenium_driver.get(encode_amazon_deals_page(deals_page, percentOff_min=5, departments=tech_ids))
 
         # when the page with the deals above 50% loads, the deals become clickable.
         # Checking for document.readyState would not work (is already ready, just loads different deals)
