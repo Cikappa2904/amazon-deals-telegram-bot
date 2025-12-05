@@ -131,10 +131,6 @@ def send_deal(bot, product_info, chat_id):
     caption = tracked_marker + emoji + " <b>" + product_info["title"] + "</b>" + "\n\n"
     caption += "\U0001F4B0 <b>EUR " + product_info["new_price"][0:len(product_info["new_price"])-1] + "</b> (prima era EUR " + product_info["old_price"][0:len(product_info["old_price"])-1] + ")" + "\n"
     caption += "\U0001F3F7 " + "<b>" + product_info["discount_rate"][1:] + " di sconto </b>" + "\n"
-    if is_tracked:
-        caption += "\U00002B50 <i>Prodotto Tracciato</i>" + "\n"
-    if category:
-        caption += "\U0001F4C2 <i>" + category.replace("_", " ").title() + "</i>" + "\n"
     caption += "\U0001F517" + "<a href ='" + add_affiliate_id(apa.url_from_id(product_info["product_id"]), os.environ.get("AMAZON_DEALS_TG_AFFILIATE_ID")) + "'>Vai all'offerta Amazon</a>" "\n\n"
 
     asyncio.run(bot.send_photo(chat_id, product_info["image_link"], caption, parse_mode="HTML"))
