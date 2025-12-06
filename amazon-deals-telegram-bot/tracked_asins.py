@@ -11,11 +11,66 @@ The bot will:
 # Add your specific ASINs here
 # Format: "ASIN": "Description (optional, for your reference)"
 TRACKED_ASINS = {
-    # Example ASINs - Replace with your own
-    # "B0CSTJP37Y": "iPhone 15 Pro Max",
-    # "B0CWV17BK2": "Samsung Galaxy S24 Ultra",
-    # "B0D6Q8KYCW": "NVIDIA RTX 4070",
-    # "B09SX4YZFG": "MacBook Air M2",
+    # Apple Products
+    "B0FQGPJCJK": "iPhone 17 Pro 256GB",
+    "B0DGHWD7CT": "AirPods 4 Wireless Earphones",
+    "B0FQF32239": "AirPods Pro 3",
+    "B0DZDR6YTB": "MacBook Air",
+    "B0DZ75RKZH": "iPad base A16",
+    "B0CL7DZXB2": "Apple Pencil USB-C",
+    "B0DXR1RW8Z": "iPhone 16e 128GB",
+    "B0FQGPHDT7": "iPhone Air 256GB",
+    
+    # Graphics Cards
+    "B0F7HZ9QSZ": "NVIDIA GeForce RTX 5060 8GB",
+    "B0FC2XXSG5": "AMD Radeon RX 9060",
+    
+    # Audio/Gaming Peripherals
+    "B0CMTQPWQ8": "Razer Seiren V3 Mini",
+    "B0FF4VRRJ5": "Razer Kraken Kitty V2 Pokemon",
+    "B0D7367TK1": "8bitdo Ultimate Controller",
+    "B0C4T7G48K": "8bitdo Ultimate Wireless Controller",
+    "B00SAYCXWG": "HyperX Cloud 2",
+    
+    # Microsoft Surface
+    "B0DYDV1KDM": "MS Surface Pro Snapdragon",
+    "B0DYF1L3D9": "MS Surface Laptop Copilot",
+    
+    # Lenovo ThinkPad
+    "B0FVFGCZGH": "Lenovo ThinkPad X390 i5-8365U",
+    "B0F9SR1GHY": "ThinkPad T480 i5-8250U",
+    
+    # Smartphones
+    "B0FW5KWL3P": "vivo X300 Pro",
+    "B0FHL2WPNW": "Google Pixel 10 Pro",
+    "B0FHJNDQBR": "Google Pixel 10",
+    
+    # Storage
+    "B0B7CKVCCV": "WD_BLACK SN850X 1TB",
+    
+    # Monitors
+    "B0FT27J4L6": "KTC 27 WQHD",
+    "B0F5HRV2TN": "MSI MAG 242F Gaming Monitor",
+    "B0CZ3PS82R": "LG UltraGear 27 2560x1440",
+    
+    # Gaming Console
+    "B0F2JCL3NZ": "Nintendo Switch 2",
+    "B0CV4WQXK5": "PS5",  # Extracted from short URL
+    
+    # Peripherals
+    "B0FG78QJKM": "ATTACK SHARK Magnetic Wireless Mouse",
+    "B0DR2WF1C4": "ATTACK SHARK X68 HE Keyboard",
+    
+    # Other
+    "B094W6V9XB": "Red Bull Energy Drink 250ml 24 Cans",
+    
+    # PC Cases
+    "B0CV4RYKLF": "NZXT H7 Flow Mid-Tower",
+    "B0CT5V2XJK": "Phanteks XT Pro Ultra",
+    
+    # RAM
+    "B0CJ8ZHMVF": "Corsair Vengeance DDR5 32GB 6000MHz",
+    "B0F2B244T4": "Corsair Vengeance RGB DDR5 32GB 6000MHz",
 }
 
 # If True, the bot will extract keywords from tracked ASINs and find similar products
