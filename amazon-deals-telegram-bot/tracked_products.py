@@ -208,7 +208,6 @@ TRACKED_CATEGORIES = {
         "enabled": True
     },
 }
-}
 
 # Amazon department IDs for tech products
 TECH_DEPARTMENT_IDS = [
