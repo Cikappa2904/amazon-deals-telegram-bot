@@ -158,7 +158,7 @@ def get_all_deals_ids():
         # # go to page with 50% or more deals (the radio with value 3)
         # deals_50_button = selenium_driver.find_element(By.XPATH, '//input[@type="radio" and @name="percentOff" and @value="3"]')
         # selenium_driver.execute_script("arguments[0].click();", deals_50_button)
-        selenium_driver.get(encode_amazon_deals_page(deals_page, percentOff_min=5, departments=tech_ids))
+        selenium_driver.get(encode_amazon_deals_page(deals_page, percentOff_min=1, departments=tech_ids))  # Any discount, even 1%
 
         # when the page with the deals above 50% loads, the deals become clickable.
         # Checking for document.readyState would not work (is already ready, just loads different deals)
@@ -209,7 +209,7 @@ def get_all_deals_ids():
         return []  # error, no ids taken
 
 
-def filter_products_by_keywords(product_ids, max_workers=10):
+def filter_products_by_keywords(product_ids, max_workers=20):  # Increased from 10 to 20 for faster processing
     """
     Filter product IDs to only include those matching tracked keywords or ASINs.
     Uses multithreading for faster processing.

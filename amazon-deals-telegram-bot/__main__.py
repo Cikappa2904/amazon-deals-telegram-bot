@@ -28,7 +28,7 @@ CRON_EXPRESSION = os.environ.get("AMAZON_DEALS_TG_CRON_SCHEDULE") if os.environ.
 OUTPUT_DEALS_FILE = "deals_ids.json" if not os.environ.get("IS_CONTAINERIZED") else "/data/deals_ids.json"  # file to save scraped deals ids
 
 # Update interval in seconds - can be configured via environment variable
-UPDATE_INTERVAL = int(os.environ.get("AMAZON_DEALS_UPDATE_INTERVAL", 10*60))  # default: 10 minutes
+UPDATE_INTERVAL = int(os.environ.get("AMAZON_DEALS_UPDATE_INTERVAL", 5*60))  # default: 5 minutes (more frequent updates)
 
 
 def get_random_product_info(deals_ids, already_sent_products_ids):
@@ -71,7 +71,7 @@ def get_random_product_info(deals_ids, already_sent_products_ids):
     already_sent_products_ids.append(selected_product_info["product_id"])
     # it is necessary to save used products ids and not only remove them from the list because the list is recreated every few hours
 
-    while(len(already_sent_products_ids) >= 50):
+    while(len(already_sent_products_ids) >= 100):  # Increased from 50 to 100 to avoid repetitions
         already_sent_products_ids.pop(0)  # remove the oldest products sent if enough time has passed
 
     # return the selected product and the updated list of ids of products already sent

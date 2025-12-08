@@ -78,8 +78,8 @@ TRACKED_ASINS = {
 FIND_SIMILAR_PRODUCTS = True
 
 # Minimum similarity score (0-100) for products to be considered similar
-# Higher = more strict, Lower = more variety
-SIMILARITY_THRESHOLD = 30
+# Lower = more products, Higher = more strict
+SIMILARITY_THRESHOLD = 15  # Very permissive - finds many similar products
 
 
 def is_tracked_asin(asin):
