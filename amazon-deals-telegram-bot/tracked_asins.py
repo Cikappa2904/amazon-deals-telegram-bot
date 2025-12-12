@@ -13,18 +13,24 @@ The bot will:
 TRACKED_ASINS = {
     # Apple Products
     "B0FQGPJCJK": "iPhone 17 Pro 256GB",
+    "B0FQGWQC6S": "iPhone 17 256GB",
     "B0DGHWD7CT": "AirPods 4 Wireless Earphones",
     "B0FQF32239": "AirPods Pro 3",
-    "B0DZDR6YTB": "MacBook Air",
+    "B0DZDR6YTB": "MacBook Air M4",
     "B0DZ75RKZH": "iPad base A16",
     "B0CL7DZXB2": "Apple Pencil USB-C",
     "B0DXR1RW8Z": "iPhone 16e 128GB",
     "B0FQGPHDT7": "iPhone Air 256GB",
-    
+    "B0FWDF8TS7": "MacBook Pro M5",
+    "B0DLJJLWCY": "MacBook Pro M4 Pro 16p",    
+    "B0FWD6KNY8": "iPad Pro 11p M5 256GB",
+    "B0DZ76JZ9Q": "iPad Air 11p M3 128GB",
     # Graphics Cards
     "B0F7HZ9QSZ": "NVIDIA GeForce RTX 5060 8GB",
     "B0FC2XXSG5": "AMD Radeon RX 9060",
-    
+    "B0DYPFY7JG": "ASUS Prime RTX 5070",
+    "B0FC5ZQKJ8": "XFX Swift 9060XT OC",
+    "B0DTGNB9Q5": "Gigabyte GeForce RTX 5070 Ti",
     # Audio/Gaming Peripherals
     "B0CMTQPWQ8": "Razer Seiren V3 Mini",
     "B0FF4VRRJ5": "Razer Kraken Kitty V2 Pokemon",
@@ -44,9 +50,14 @@ TRACKED_ASINS = {
     "B0FW5KWL3P": "vivo X300 Pro",
     "B0FHL2WPNW": "Google Pixel 10 Pro",
     "B0FHJNDQBR": "Google Pixel 10",
+    "B0DSY665M3": "Samsung Galaxy S25 256GB",
+    "B0DTHRQCKX": "Samsung Galaxy S25 Ultra 256GB",
+    "B0CMD9PNVX": "Samsung Galaxy Tab A9+ 128GB",
+    "B0FKBXQRD9": "Samsung Galaxy Tab S11 128GB",
     
     # Storage
     "B0B7CKVCCV": "WD_BLACK SN850X 1TB",
+    "B0B9C4DKKG": "Sammsung 990 Pro",
     
     # Monitors
     "B0FT27J4L6": "KTC 27 WQHD",
@@ -55,7 +66,7 @@ TRACKED_ASINS = {
     
     # Gaming Console
     "B0F2JCL3NZ": "Nintendo Switch 2",
-    "B0CV4WQXK5": "PS5",  # Extracted from short URL
+    "B0CV4WQXK5": "PS5",
     
     # Peripherals
     "B0FG78QJKM": "ATTACK SHARK Magnetic Wireless Mouse",
@@ -67,10 +78,26 @@ TRACKED_ASINS = {
     # PC Cases
     "B0CV4RYKLF": "NZXT H7 Flow Mid-Tower",
     "B0CT5V2XJK": "Phanteks XT Pro Ultra",
+    "B0DFHNV7TK": "Corsair Frame 4000D RS ARGB",
     
     # RAM
     "B0CJ8ZHMVF": "Corsair Vengeance DDR5 32GB 6000MHz",
     "B0F2B244T4": "Corsair Vengeance RGB DDR5 32GB 6000MHz",
+
+    # CPU
+    "B0D6NN6TM7": "Ryzen 5 9600X",
+    "B0DKFMSMYK": "Ryzen 7 9800X3D",
+    "B0D6NN87T8": "Ryzen 9 9900X",
+    "B0BTZB7F88": "Ryzen 7 7800X3D",
+
+    # Motherboards
+    "B0CSKH1NJF": "Gigabyte B650 EAGLE AX",
+
+    # Cooler
+    "B0DLWFCVSD": "ARCTIC Liquid Freezer III Pro 360 AB0D9C1DT62-RGB",
+    "B0DF7C4YPQ": "CORSAIR NAUTILUS 360 RS ARGB",
+    # PSU
+    "B0D9C1DT62": "Corsair RM850x"
 }
 
 # If True, the bot will extract keywords from tracked ASINs and find similar products
